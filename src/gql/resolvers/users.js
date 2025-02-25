@@ -1,8 +1,5 @@
 export default {
 	Query: {
-		/**
-		 * It allows to administrators users to list all users registered
-		 */
 		listAllUsers:  async (parent, args, context) => {
 			context.di.authValidation.ensureThatUserIsLogged(context);
 

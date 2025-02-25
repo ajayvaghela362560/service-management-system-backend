@@ -1,6 +1,7 @@
 import { AuthenticationError, ForbiddenError, ValidationError } from 'apollo-server-express';
 import { models } from '../../data/models/index.js';
 import { globalVariablesConfig } from '../../config/appConfig.js';
+import mongoose from 'mongoose';
 
 export const authValidations = {
 	ensureLimitOfUsersIsNotReached: (numberOfCurrentlyUsersRegistered) => {
@@ -31,8 +32,9 @@ export const authValidations = {
 			return null;
 		}
 	
-		const userUUID = context.user.uuid || null;
-		const user = await models.Users.findOne({ uuid: userUUID }).lean();
+		const userId = context.user.userId || null;
+		const id = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : "";
+		const user = await models.Users.findOne({ id, isActive: true }).lean();
 		if (!user) {
 			throw new AuthenticationError('You must be logged in to perform this action');
 		}
