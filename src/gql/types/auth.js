@@ -4,6 +4,10 @@ export default /* GraphQL */ gql`
 	type Token {
 		token: String
 	}
+	
+	type ForgotPasswordResponse {
+		message: String!
+	}
 
 	input RegisterUserInput {
 		email: String
@@ -23,7 +27,6 @@ export default /* GraphQL */ gql`
 		googleToken: String
 	}
 
-
 	type Mutation {
 		""" It allows users to register """
 		registerUser(input: RegisterUserInput!): Token
@@ -33,5 +36,8 @@ export default /* GraphQL */ gql`
 
 		""" It allows to user to delete their account permanently """
 		deleteMyUserAccount: DeleteResult
+
+		""" It allows users to forgot their password using the email"""
+		forgotPassword(email: String!): ForgotPasswordResponse!
 	}
 `;

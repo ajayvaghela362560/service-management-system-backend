@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 
 const Schema = mongoose.Schema;
 
 export const UserRole = {
 	User: 'User',
 	Admin: 'Admin',
-	Business: 'Business'
+	Business: 'Business',
+	Barber: 'Barber'
 };
 
 export const LoginType = {

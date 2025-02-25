@@ -5,9 +5,6 @@ import { ENVIRONMENT } from '../../config/environment.js';
 import { logger } from '../../helpers/logger.js';
 import { models } from '../../data/models/index.js';
 
-/**
- * Context function from Apollo Server
- */
 export const setContext = async ({ req }) => {
 	const context = {
 		di: {

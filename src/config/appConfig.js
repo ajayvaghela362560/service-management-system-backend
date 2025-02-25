@@ -15,7 +15,8 @@ export const environmentVariablesConfig = Object.freeze({
 	mongoUser: process.env.MONGO_USER || '',
 	mongoPass: process.env.MONGO_PASS || '',
 	environment: (process.env.ENVIRONMENT === ENVIRONMENT.DEVELOPMENT) ? ENVIRONMENT.DEVELOPMENT : ENVIRONMENT.PRODUCTION,
-	port: Number(process.env.PORT) || serverPortByDefault
+	port: Number(process.env.PORT) || serverPortByDefault,
+	ResetLinkUrl: process.env.FRONTEND_RESET_LINK_URL || '',
 });
 
 export const securityVariablesConfig = Object.freeze({

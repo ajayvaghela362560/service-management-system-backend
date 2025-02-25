@@ -21,8 +21,7 @@ export default {
 	Query: {
 	},
 	Mutation: {
-
-		registerUser: async (parent, {input}, context) => {
+		registerUser: async (parent, { input }, context) => {
 			const { email, password, firstName, lastName, phoneNumber, loginType, userRole, googleToken } = input;
 
 			let userData = { email, firstName, lastName, phoneNumber, loginType, userRole };
@@ -77,7 +76,7 @@ export default {
 				token: context.di.jwt.createAuthToken(user._id)
 			};
 		},
-		loginUser: async (parent, {input}, context) => {
+		loginUser: async (parent, { input }, context) => {
 			const { email, password, loginType, googleToken } = input;
 
 			// Process data based on loginType
@@ -133,15 +132,33 @@ export default {
 				throw new UserInputError('Invalid login type');
 			}
 		},
-		/**
-		 * It allows to user to delete their account permanently (this action does not delete the records associated with the user, it only deletes their user account)
-		 */
 		deleteMyUserAccount: async (parent, args, context) => {
 			context.di.authValidation.ensureThatUserIsLogged(context);
 
 			const user = await context.di.authValidation.getUser(context);
 
 			return context.di.model.Users.deleteOne({ uuid: user.uuid });
+		},
+		forgotPassword: async (_, { email }, context) => {
+			try {
+				// Check if user exists
+				// const user = await User.findOne({ email });
+				// if (!user) {
+				// 	throw new UserInputError('The email address you entered is not associated with any account in our system. Please check for typos or try a different email.');
+				// }
+
+				// // Generate a reset token (You can use JWT or crypto for this)
+				// const resetToken = user.generateResetToken(); // Assuming you have this method in the model
+				// await user.save(); // Save token to DB
+
+				// // Send reset email
+				// await sendResetEmail(email, resetToken);
+
+				return { message: "Password reset link has been sent to your email." };
+			} catch (error) {
+				console.error("Forgot Password Error:", error);
+				throw new Error("Something went wrong. Please try again.");
+			}
 		}
 	}
 };
