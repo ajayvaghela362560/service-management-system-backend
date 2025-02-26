@@ -17,6 +17,12 @@ export const environmentVariablesConfig = Object.freeze({
 	environment: (process.env.ENVIRONMENT === ENVIRONMENT.DEVELOPMENT) ? ENVIRONMENT.DEVELOPMENT : ENVIRONMENT.PRODUCTION,
 	port: Number(process.env.PORT) || serverPortByDefault,
 	ResetLinkUrl: process.env.FRONTEND_RESET_LINK_URL || '',
+	// Email send credentials
+	smtp_host: process.env.EMAIL_HOST,
+	smtp_port: Number(process.env.EMAIL_PORT),
+	smtp_secure: process.env.EMAIL_SECURE === "true",
+	smtp_auth_user: process.env.EMAIL_USER,
+	smtp_auth_pass: process.env.EMAIL_PASS,
 });
 
 export const securityVariablesConfig = Object.freeze({

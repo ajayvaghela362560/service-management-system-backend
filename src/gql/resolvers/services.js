@@ -92,6 +92,12 @@ export default {
                 throw new UserInputError('All fields (name, price, duration) are required.');
             }
 
+            // Check if the same name service already exist
+            const alreadyExistService = await context.di.model.Services.findOne({ name, createdBy: user._id });
+            if (alreadyExistService) {
+                throw new UserInputError('This service name is alredy exist.');
+            }
+
             const newService = new context.di.model.Services({
                 name,
                 price,
@@ -115,7 +121,7 @@ export default {
             if (!user) {
                 throw new AuthenticationError('You must be logged in to perform this action.');
             }
-            
+
             const { id, name, price, duration } = input;
 
             if (!id) {
@@ -125,6 +131,17 @@ export default {
             const existingService = await context.di.model.Services.findById(id);
             if (!existingService) {
                 throw new UserInputError('Service not found.');
+            }
+
+            // Check if the same name service already exists (excluding the current service)
+            const alreadyExistService = await context.di.model.Services.findOne({
+                name,
+                createdBy: user._id,
+                _id: { $ne: id }
+            });
+
+            if (alreadyExistService) {
+                throw new UserInputError('This service name already exists.');
             }
 
             existingService.name = name || existingService.name;

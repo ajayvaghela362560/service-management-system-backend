@@ -8,6 +8,10 @@ export default /* GraphQL */ gql`
 	type ForgotPasswordResponse {
 		message: String!
 	}
+	
+	type ResetPasswordResponse {
+		message: String!
+	}
 
 	input RegisterUserInput {
 		email: String
@@ -39,5 +43,8 @@ export default /* GraphQL */ gql`
 
 		""" It allows users to forgot their password using the email"""
 		forgotPassword(email: String!): ForgotPasswordResponse!
+
+		""" It allows users to reset their new password using forgot password token"""
+		resetPassword(token: String!, password: String!): ResetPasswordResponse!
 	}
 `;

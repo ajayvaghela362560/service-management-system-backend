@@ -33,8 +33,8 @@ export const authValidations = {
 		}
 	
 		const userId = context.user.userId || null;
-		const id = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : "";
-		const user = await models.Users.findOne({ id, isActive: true }).lean();
+		const _id = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : "";
+		const user = await models.Users.findOne({ _id, isActive: true }).lean();
 		if (!user) {
 			throw new AuthenticationError('You must be logged in to perform this action');
 		}
