@@ -45,6 +45,7 @@
     "lodash.merge": "4.6.2",
     "log4js": "6.9.1",
     "mongoose": "7.6.4",
+    "nodemailer": "^6.10.0",
     "serve-favicon": "2.5.0"
   }
 }
