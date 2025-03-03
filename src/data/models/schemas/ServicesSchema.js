@@ -20,6 +20,10 @@ const ServicesSchema = new Schema({
         ref: "users",
         required: true
     },
+    description: {
+        type: String,
+        required: false
+    },
     isActive: {
         type: Boolean,
         required: false,

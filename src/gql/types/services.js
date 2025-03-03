@@ -6,6 +6,7 @@ export default gql`
 		name: String
 		price: String
 		duration: String
+		description: String
 	}
 
 	type Service_Mutation_Response {
@@ -18,11 +19,16 @@ export default gql`
 		services: [Service!]!
 	}
 
+	type Service_Deletion_Response {
+		message: String
+	}
+
 	input ServiceInput {
 		id: String
 		name: String!
 		price: String!
 		duration: String!
+		description: String!
 	}
 
 	type Query {
@@ -31,13 +37,19 @@ export default gql`
 
 		""" Get all services """
 		getAllServices(page: Int, limit: Int, search: String): Service_Query_Response
+
+		""" get services without pagination """
+		fetchServicesWithoutPagination: Service_Query_Response
 	}
 
 	type Mutation {
 		""" Add New Services """
 		AddService(input: ServiceInput!): Service_Mutation_Response
 
-		""" Edit New Services """
+		""" Edit Services """
 		EditService(input: ServiceInput!): Service_Mutation_Response
+
+		""" Delete Services """
+		deleteService(id: String!): Service_Deletion_Response
 	}
 `;

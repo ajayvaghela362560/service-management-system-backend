@@ -1,9 +1,9 @@
 import { AuthenticationError, UserInputError } from 'apollo-server-express';
 import mongoose from 'mongoose';
+import authMiddleware from '../../helpers/middlewares/auth.js';
 
 export default {
     Query: {
-        // Get a service by ID
         getServiceById: async (parent, { id }, context) => {
             const user = await context.di.authValidation.getUser(context);
 
@@ -25,7 +25,6 @@ export default {
 
             return service;
         },
-        // Get all services
         getAllServices: async (_, { page = 1, limit = 10, search = "" }, context) => {
             const user = await context.di.authValidation.getUser(context);
 
@@ -75,9 +74,44 @@ export default {
 
             return result[0] || { total_services: 0, services: [] };
         },
+        fetchServicesWithoutPagination: authMiddleware(async (_, { }, context) => {
+
+            // Define base filter
+            let filter = { createdBy: context?.user?._id, isActive: true };
+
+            const pipeline = [
+                { $match: filter },
+                { $sort: { createdAt: -1 } },
+                {
+                    $facet: {
+                        metadata: [{ $count: "total_services" }],
+                        services: [
+                            {
+                                $project: {
+                                    _id: 0,
+                                    id: "$_id",
+                                    name: 1,
+                                    price: 1,
+                                    duration: 1
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        total_services: { $arrayElemAt: ["$metadata.total_services", 0] },
+                        services: 1
+                    }
+                }
+            ];
+
+            const result = await context.di.model.Services.aggregate(pipeline);
+
+            return result[0] || { total_services: 0, services: [] };
+        }),
     },
     Mutation: {
-        // Add a new service
         AddService: async (parent, { input }, context) => {
             const user = await context.di.authValidation.getUser(context);
 
@@ -86,10 +120,10 @@ export default {
                 throw new AuthenticationError('You must be logged in to perform this action.');
             }
 
-            const { name, price, duration } = input;
+            const { name, price, duration, description } = input;
 
-            if (!name || !price || !duration) {
-                throw new UserInputError('All fields (name, price, duration) are required.');
+            if (!name || !price || !duration || !description) {
+                throw new UserInputError('All fields are required.');
             }
 
             // Check if the same name service already exist
@@ -102,6 +136,7 @@ export default {
                 name,
                 price,
                 duration,
+                description,
                 createdBy: user._id
             });
 
@@ -112,8 +147,6 @@ export default {
                 result: newService,
             };
         },
-
-        // Edit an existing service
         EditService: async (parent, { input }, context) => {
             const user = await context.di.authValidation.getUser(context);
 
@@ -122,7 +155,7 @@ export default {
                 throw new AuthenticationError('You must be logged in to perform this action.');
             }
 
-            const { id, name, price, duration } = input;
+            const { id, name, price, duration, description } = input;
 
             if (!id) {
                 throw new UserInputError('Service ID is required for editing.');
@@ -147,12 +180,33 @@ export default {
             existingService.name = name || existingService.name;
             existingService.price = price || existingService.price;
             existingService.duration = duration || existingService.duration;
+            existingService.description = description || existingService.description;
 
             await existingService.save();
 
             return {
                 message: 'Service updated successfully!',
                 result: existingService,
+            };
+        },
+        deleteService: async (_, { id }, context) => {
+            const user = await context.di.authValidation.getUser(context);
+
+            // Check if the user is authenticated
+            if (!user) {
+                throw new AuthenticationError('You must be logged in to perform this action.');
+            }
+
+            const existingService = await context.di.model.Services.findById(id);
+            if (!existingService) {
+                throw new UserInputError('Service not found.');
+            }
+
+            // Delete the service
+            await context.di.model.Services.findByIdAndDelete(id);
+
+            return {
+                message: 'Service deleted successfully!',
             };
         },
     },

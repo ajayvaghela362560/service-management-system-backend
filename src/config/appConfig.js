@@ -23,6 +23,13 @@ export const environmentVariablesConfig = Object.freeze({
 	smtp_secure: process.env.EMAIL_SECURE === "true",
 	smtp_auth_user: process.env.EMAIL_USER,
 	smtp_auth_pass: process.env.EMAIL_PASS,
+	// for aws s3 files uploads
+	aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key: process.env.AWS_SECRET_ACCESS_KEY,
+    aws_region: process.env.AWS_REGION,
+    aws_bucket_name: process.env.AWS_BUCKET_NAME,
+	// bussiness panel login url
+	business_panel_login_url: process.env.BUSINESS_PANEL_LOGIN_URL,
 });
 
 export const securityVariablesConfig = Object.freeze({

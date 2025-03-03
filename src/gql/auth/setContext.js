@@ -17,7 +17,8 @@ export const setContext = async ({ req }) => {
 			jwt: {
 				createAuthToken: createAuthToken
 			}
-		}
+		},
+		req
 	};
 
 	let token = req.headers['authorization'];
