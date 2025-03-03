@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-// import bcrypt from 'bcrypt';
 
 const Schema = mongoose.Schema;
 
@@ -7,7 +6,7 @@ export const UserRole = {
 	User: 'User',
 	Admin: 'Admin',
 	Business: 'Business',
-	Barber: 'Barber'
+	Employee: 'Employee',
 };
 
 export const LoginType = {
@@ -61,23 +60,5 @@ const UsersSchema = new Schema({
 		default: UserRole.User
 	}
 }, { timestamps: true });
-
-// UsersSchema.pre('save', function (next) {
-// 	if (!this.isModified('password')) {
-// 		return next();
-// 	}
-// 	bcrypt.genSalt((err, salt) => {
-// 		if (err) {
-// 			return next(err);
-// 		}
-// 		bcrypt.hash(this.password, salt, (err, hash) => {
-// 			if (err) {
-// 				return next(err);
-// 			}
-// 			this.password = hash;
-// 			next();
-// 		});
-// 	});
-// });
 
 export { UsersSchema };

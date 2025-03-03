@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import nodemailer from "nodemailer";
 import { UserInputError } from 'apollo-server-express';
 import { OAuth2Client } from 'google-auth-library';
 import { isValidEmail, isStrongPassword } from '../../helpers/validations.js';
 import { validateAuthToken } from '../auth/jwt.js';
 import { LoginType } from '../../data/models/schemas/UsersSchema.js';
 import { environmentVariablesConfig } from '../../config/appConfig.js';
+import { sendResetMail } from '../../helpers/mailSend.js';
 import mongoose from 'mongoose';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // validate email and check if user already exists
@@ -20,43 +20,7 @@ async function validateAndCheckUserExistence(email, model) {
 	}
 }
 
-async function sendResetMail(email, resetLink) {
-	try {
-		// Create transporter for cPanel email
-		const transporter = nodemailer.createTransport({
-			host: environmentVariablesConfig.smtp_host, // cPanel SMTP host
-			port: environmentVariablesConfig.smtp_port, // Convert port to number (465 or 587)
-			secure: environmentVariablesConfig.smtp_secure, // true for SSL, false for TLS
-			auth: {
-				user: environmentVariablesConfig.smtp_auth_user, // Your cPanel email
-				pass: environmentVariablesConfig.smtp_auth_pass, // Your cPanel email password
-			},
-		});
 
-		// Email content
-		const mailOptions = {
-			from: `"Support Team" <${environmentVariablesConfig.smtp_auth_user}>`,
-			to: email,
-			subject: "Password Reset Request",
-			html: `
-				<p>We received a request to reset your password.</p>
-				<p>Click the link below to reset your password:</p>
-				<a href="${resetLink}" target="_blank">${resetLink}</a>
-				<p>If you did not request this, please ignore this email.</p>
-				<p>Thank you,<br/>Support Team</p>
-			`,
-		};
-
-		// Send the email
-		const info = await transporter.sendMail(mailOptions);
-		console.log("Password reset email sent: ", info.response);
-
-		return { success: true, message: "Password reset link has been sent to your email." };
-	} catch (error) {
-		console.error("Error sending reset email:", error);
-		return { success: false, message: "Failed to send password reset email." };
-	}
-};
 
 const validateToken = async (token) => {
 	try {
