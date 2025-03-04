@@ -57,7 +57,7 @@ const initApplication = async () => {
 		// Allow GraphQL Playground on development environments
 		app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 	}
-	app.use(cors({ credentials: true }));
+	app.use(cors({ origin: '*' }));
 	const __dirname = path.dirname(fileURLToPath(import.meta.url));
 	app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 	app.use('', routesManager);
